@@ -1,20 +1,110 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div class="list">
+  <div class="list__main-container">
+    <div class="list__main-title-container">
+      <h2 class="list__main-title"
+          [innerText]="componentData.main.title.text"></h2>
+    </div>
 
+    <div class="list__main-selected-container">
+      <div class="list__main-selected" *ngIf="selectedList.length; else makeChoice">
+        {{componentData.main.selected.text}} <strong>{{selectedList.length}}</strong>
+      </div>
+
+      <ng-template #makeChoice>
+        {{componentData.main.selected.makeChoice}}
+      </ng-template>
+
+      <div class="list__main-selected-items">
+        <ol>
+          <li *ngFor="let element of selectedList"
+              class="list__main-selected-item">
+            <div class="list__selected-item">
+              {{element.name}}
+              <button [innerText]="componentData.main.button.remove"
+                      (click)="removeElementFromSelected(element)">
+              </button>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="list__main-btn-container">
+        <button (click)="componentData.main.button.action()"
+                [disabled]="componentData.update.container.show"
+                class="list__main-btn list__btn"
+                [innerText]="componentData.main.button.text">
+        </button>
+    </div>
+  </div>
+
+  <div class="list__update-container"
+       *ngIf="componentData.update.container.show">
+    <div class="list__update-header">
+      <div class="list__update-header-text"
+           [innerText]="componentData.update.header.text">
+      </div>
+
+      <div class="list__update-header-btn-container">
+        <button class="list__update-header-btn-container list__btn"
+                (click)="componentData.update.header.button.action()"
+                [innerText]="componentData.update.header.button.text">
+        </button>
+      </div>
+    </div>
+
+    <div class="list__update-filter-container">
+      <label for="filter"
+             class="list__update-filter-container-label"
+             [innerText]="componentData.update.filter.byName"></label>
+      <input id="filter" type="text" [(ngModel)]="searchElement">
+    </div>
+
+    <div class="list__update-list-container">
+      <ul class="list__update-list">
+        <li *ngFor="let element of filteredList"
+            class="list__update-list-item">
+          <input type="checkbox"
+                 id="{{element.id}}"
+                 [disabled]="false"
+                 (input)="selectElement(element)"
+                 [checked]="element.selected">
+          <label [for]="element.id"
+                 [innerText]="element.name">
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <div class="list__update-temporary-selected-container">
+      <span class="list__update-temporary-selected-text"
+            [innerText]="componentData.update.temporary.text">
+
+      </span>
+      <ul class="list__update-temporary-selected-list">
+        <li *ngFor="let el of tempSelectedList"
+            class="list__update-temporary-selected-list-item">
+          <div class="list__selected-item">
+            {{el.name}}
+            <button [innerText]="componentData.main.button.remove"
+                    (click)="removeElementFromTemporarySelected(el)">
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="list__update-btn-container">
+      <button (click)="componentData.update.buttons.save.action()"
+              class="list__update-btn list__btn"
+              [disabled]="!tempSelectedList.length"
+              [innerText]="componentData.update.buttons.save.text">
+      </button>
+
+      <button (click)="componentData.update.buttons.cancel.action()"
+              class="list__update-btn list__btn"
+              [innerText]="componentData.update.buttons.cancel.text">
+      </button>
+    </div>
+  </div>
+</div>
