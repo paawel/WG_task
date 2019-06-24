@@ -6,7 +6,8 @@
     </div>
 
     <div class="list__main-selected-container">
-      <div class="list__main-selected" *ngIf="selectedList.length; else makeChoice">
+      <div class="list__main-selected"
+           *ngIf="selectedList.length; else makeChoice">
         {{componentData.main.selected.text}} <strong>{{selectedList.length}}</strong>
       </div>
 
@@ -22,7 +23,7 @@
               {{element.name}}
               <button [innerText]="componentData.main.button.remove"
                       [disabled]="componentData.update.container.show"
-                      (click)="removeElementFromSelected(element)">
+                      (click)="removeElementFromSelected(element,'main')">
               </button>
             </div>
           </li>
@@ -89,7 +90,7 @@
           <div class="list__selected-item">
             {{el.name}}
             <button [innerText]="componentData.main.button.remove"
-                    (click)="removeElementFromTemporarySelected(el)">
+                    (click)="removeElementFromSelected(el, 'update')">
             </button>
           </div>
         </li>

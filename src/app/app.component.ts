@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 const CONFIG = {
-  ELEMENTS: 300
+  ELEMENTS: 50
 };
 
 @Component({
@@ -12,12 +12,16 @@ const CONFIG = {
 
 export class AppComponent implements OnInit {
   makeChoice: any;
+  componentData: Object = {};
+
   list: Array = [];
   filteredList: Array = [];
   selectedList: Array = [];
   tempSelectedList: Array = [];
-  componentData: Object = {};
 
+  bufferObj: Array = [];
+
+  //*** filter
   private _searchElement: string;
 
   get searchElement(): string {
@@ -29,12 +33,47 @@ export class AppComponent implements OnInit {
     this.filteredList = this.filterList(value);
   }
 
+  filterList(search: string) {
+    return this.list.filter(element => {
+      return element.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+    })
+  }
+  //filter ***
+
+  _createData(length) {
+    let _arr: Array = [];
+
+    for (let i = 1; i <= length; i++) {
+      _arr.push({
+        name:`Элемент ${i}`,
+        id: `el${i}`,
+        selected: false,
+        disabled: false
+      });
+    }
+
+    return _arr;
+  }
+
+  _compareObjects(x, y) {
+    let same = true;
+
+    for(let prop in x) {
+      if(x[prop].selected !== y[prop].selected) {
+        same = false;
+        break;
+      }
+    }
+
+    return same;
+  }
+
   constructor() {
     this.componentData = {
       main: {
         button: {
           text: "Изменить мой выбор",
-          action: this.triggerUpdateBlock.bind(this),
+          action: this.showUpdateModal.bind(this),
           remove: "x"
         },
         selected: {
@@ -53,7 +92,7 @@ export class AppComponent implements OnInit {
           text: "Диалог выбора элементов",
           button: {
             text: "X",
-            action: this.triggerUpdateBlock.bind(this)
+            action: this.hideUpdateModal.bind(this)
           }
         },
         filter: {
@@ -77,83 +116,60 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.list = this.createData(CONFIG.ELEMENTS);
+    this.list = this._createData(CONFIG.ELEMENTS);
     this.filteredList = this.list;
   }
 
-  createData(length) {
-    let _arr: Array = [];
-
-    for (let i = 1; i <= length; i++) {
-      _arr.push({
-        name:`Элемент ${i}`,
-        id: `el${i}`,
-        selected: false,
-        disabled: false
-      });
-    }
-
-    return _arr;
+  showUpdateModal() {
+    this.componentData.update.container.show = true;
+    this.tempSelectedList = this.getSelectedElements();
+    this.bufferObj = JSON.parse(JSON.stringify(this.filteredList));
   }
 
-  triggerUpdateBlock() {
-    this.componentData.update.container.show = !this.componentData.update.container.show;
+  hideUpdateModal() {
+    this.componentData.update.container.show = false;
   }
 
   saveUpdate() {
-    this.selectedList = this.tempSelectedList;
-
-    this.triggerUpdateBlock();
+    this.selectedList = this.getSelectedElements();
+    this.hideUpdateModal();
   }
 
   cancelUpdate() {
-    this.triggerUpdateBlock();
-  }
+   if (!this._compareObjects(this.bufferObj, this.filteredList)) {
+     this.filteredList = JSON.parse(JSON.stringify(this.bufferObj));
+   }
 
-  filterList(search: string) {
-    return this.list.filter(element => {
-      return element.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
-    })
+   this.hideUpdateModal();
   }
 
   selectElement(el) {
     el.selected = !el.selected;
+    this.tempSelectedList = this.getSelectedElements();
+    this.setDisabledFields();
+  }
 
-    this.tempSelectedList = this.list.filter(el => {
-      return el.selected === true;
-    });
+  getSelectedElements() {
+    return this.filteredList.filter(el => el.selected === true);
+  }
 
-    if (this.tempSelectedList.length == 3) {
-      this._setDisabledFields(true);
+  removeElementFromSelected(el, location) {
+    el.selected = false;
+    location === 'main' ? this.selectedList = this.getSelectedElements() : this.tempSelectedList = this.getSelectedElements();
+  }
+
+  setDisabledFields() {
+    if (this.getSelectedElements().length == 3) {
+      for(let i = 0; i < this.filteredList.length; i++) {
+        if (!this.filteredList[i].selected) {
+          this.filteredList[i].disabled = true;
+        }
+      }
     } else {
-      this._setDisabledFields(false);
-    }
-  }
-
-  removeElementFromSelected(el) {
-    el.selected = false;
-
-    for(let i = 0; i < this.selectedList.length; i++) {
-      if (this.selectedList[i].id === el.id) {
-        this.selectedList.splice(i, 1);
-      }
-    }
-  }
-
-  removeElementFromTemporarySelected(el) {
-    el.selected = false;
-
-    for(let i = 0; i < this.tempSelectedList.length; i++) {
-      if (this.tempSelectedList[i].id === el.id) {
-        this.tempSelectedList.splice(i, 1);
-      }
-    }
-  }
-
-  _setDisabledFields(bool) {
-    for(let i = 0; i < this.filteredList.length; i++) {
-      if (!this.filteredList[i].selected) {
-        this.filteredList[i].disabled = bool;
+      for(let i = 0; i < this.filteredList.length; i++) {
+        if (!this.filteredList[i].selected) {
+          this.filteredList[i].disabled = false;
+        }
       }
     }
   }
