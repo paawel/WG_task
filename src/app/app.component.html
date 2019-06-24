@@ -64,21 +64,22 @@
       </div>
 
       <div class="list__update-filter-select-box list__update-filter-container-item">
-        <!--<label for="filterSelect"-->
-               <!--class="list__update-filter-container-label"-->
-               <!--[innerText]="componentData.update.filter.select"></label>-->
-        <!--<select id="filterSelect">-->
-          <!--<option value="noSelect">Без фильтра</option>-->
-          <!--<option value="moreThan10">Номер > 10</option>-->
-          <!--<option value="moreThan100">Номер > 100</option>-->
-          <!--<option value="moreThan200">Номер > 200</option>-->
-        <!--</select>-->
+        <label for="selectedValue"
+               class="list__update-filter-container-label"
+               [innerText]="componentData.update.filter.select.label"></label>
+        <select id="selectedValue"
+                [(ngModel)]="selectedValue">
+          <option *ngFor="let el of componentData.update.filter.select.options"
+                  [ngValue]="el.val">
+            {{el.name}}
+          </option>
+        </select>
       </div>
     </div>
 
     <div class="list__update-list-container">
       <ul class="list__update-list">
-        <li *ngFor="let element of filteredList"
+        <li *ngFor="let element of filteredList | selectfilter: selectedValue"
             class="list__update-list-item">
           <input type="checkbox"
                  class="list__update-list-item-input"

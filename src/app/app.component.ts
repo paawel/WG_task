@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 const CONFIG = {
-  ELEMENTS: 50
+  ELEMENTS: 300
 };
 
 @Component({
@@ -21,25 +21,6 @@ export class AppComponent implements OnInit {
 
   bufferObj: any = [];
 
-  //*** filter
-  private _searchElement: string;
-
-  get searchElement(): string {
-    return this._searchElement;
-  }
-
-  set searchElement(value: string) {
-    this._searchElement = value;
-    this.filteredList = this.filterList(value);
-  }
-
-  filterList(search: string) {
-    return this.list.filter(element => {
-      return element.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
-    })
-  }
-  //filter ***
-
   _createData(length) {
     let _arr = [];
 
@@ -47,6 +28,7 @@ export class AppComponent implements OnInit {
       _arr.push({
         name:`Элемент ${i}`,
         id: `el${i}`,
+        value: i,
         selected: false,
         disabled: false
       });
@@ -96,12 +78,20 @@ export class AppComponent implements OnInit {
           text: "Диалог выбора элементов",
           button: {
             text: "X",
-            action: this.hideUpdateModal.bind(this)
+            action: this.cancelUpdate.bind(this)
           }
         },
         filter: {
           byName: "Поиск",
-          select: "Фильтр"
+          select: {
+            label: "Фильтр",
+            options: [
+              {name: "Без фильтра", val: 'noValue'},
+              {name: "Номер > 10", val: '>10'},
+              {name: "Номер > 100", val: '>100'},
+              {name: "Номер > 200", val: '>200'}
+            ]
+          }
         },
         buttons: {
           save: {
@@ -181,4 +171,24 @@ export class AppComponent implements OnInit {
       }
     }
   }
+
+  //*** filter
+  private _searchElement: string;
+  selectedValue = 'noValue';
+
+  get searchElement(): string {
+    return this._searchElement;
+  }
+
+  set searchElement(value: string) {
+    this._searchElement = value;
+    this.filteredList = this.filterList(value);
+  }
+
+  filterList(search: string) {
+    return this.list.filter(element => {
+      return element.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+    })
+  }
+  //filter ***
 }

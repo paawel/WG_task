@@ -4,9 +4,12 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 
+import { SelectFilterPipe } from './selectFilter.pipe';
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SelectFilterPipe
   ],
   imports: [
     BrowserModule,
