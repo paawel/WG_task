@@ -56,10 +56,24 @@
     </div>
 
     <div class="list__update-filter-container">
-      <label for="filter"
-             class="list__update-filter-container-label"
-             [innerText]="componentData.update.filter.byName"></label>
-      <input id="filter" type="text" [(ngModel)]="searchElement">
+      <div class="list__update-filter list__update-filter-container-item">
+        <label for="filter"
+               class="list__update-filter-container-label"
+               [innerText]="componentData.update.filter.byName"></label>
+        <input id="filter" type="text" [(ngModel)]="searchElement">
+      </div>
+
+      <div class="list__update-filter-select-box list__update-filter-container-item">
+        <!--<label for="filterSelect"-->
+               <!--class="list__update-filter-container-label"-->
+               <!--[innerText]="componentData.update.filter.select"></label>-->
+        <!--<select id="filterSelect">-->
+          <!--<option value="noSelect">Без фильтра</option>-->
+          <!--<option value="moreThan10">Номер > 10</option>-->
+          <!--<option value="moreThan100">Номер > 100</option>-->
+          <!--<option value="moreThan200">Номер > 200</option>-->
+        <!--</select>-->
+      </div>
     </div>
 
     <div class="list__update-list-container">

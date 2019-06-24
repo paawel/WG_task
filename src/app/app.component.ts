@@ -11,15 +11,15 @@ const CONFIG = {
 })
 
 export class AppComponent implements OnInit {
-  makeChoice: any;
-  componentData: Object = {};
+  makeChoice;
+  componentData;
 
-  list: Array = [];
-  filteredList: Array = [];
-  selectedList: Array = [];
-  tempSelectedList: Array = [];
+  list = [];
+  filteredList = [];
+  selectedList = [];
+  tempSelectedList = [];
 
-  bufferObj: Array = [];
+  bufferObj: any = [];
 
   //*** filter
   private _searchElement: string;
@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
   //filter ***
 
   _createData(length) {
-    let _arr: Array = [];
+    let _arr = [];
 
     for (let i = 1; i <= length; i++) {
       _arr.push({
@@ -66,6 +66,10 @@ export class AppComponent implements OnInit {
     }
 
     return same;
+  }
+
+  _noRefObject(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
   constructor() {
@@ -96,7 +100,8 @@ export class AppComponent implements OnInit {
           }
         },
         filter: {
-          byName: "Поиск"
+          byName: "Поиск",
+          select: "Фильтр"
         },
         buttons: {
           save: {
@@ -121,9 +126,11 @@ export class AppComponent implements OnInit {
   }
 
   showUpdateModal() {
+    this.filteredList = this.list;
+    this.searchElement = '';
     this.componentData.update.container.show = true;
     this.tempSelectedList = this.getSelectedElements();
-    this.bufferObj = JSON.parse(JSON.stringify(this.filteredList));
+    this.bufferObj = this._noRefObject(this.list);
   }
 
   hideUpdateModal() {
@@ -136,39 +143,40 @@ export class AppComponent implements OnInit {
   }
 
   cancelUpdate() {
-   if (!this._compareObjects(this.bufferObj, this.filteredList)) {
-     this.filteredList = JSON.parse(JSON.stringify(this.bufferObj));
+   if (!this._compareObjects(this.bufferObj, this.list)) {
+     this.list = this._noRefObject(this.bufferObj);
    }
-
    this.hideUpdateModal();
   }
 
   selectElement(el) {
     el.selected = !el.selected;
     this.tempSelectedList = this.getSelectedElements();
-    this.setDisabledFields();
+    this.configDisabledFields();
   }
 
   getSelectedElements() {
-    return this.filteredList.filter(el => el.selected === true);
+    return this.list.filter(el => el.selected === true);
   }
 
   removeElementFromSelected(el, location) {
     el.selected = false;
     location === 'main' ? this.selectedList = this.getSelectedElements() : this.tempSelectedList = this.getSelectedElements();
+
+    this.configDisabledFields();
   }
 
-  setDisabledFields() {
+  configDisabledFields() {
     if (this.getSelectedElements().length == 3) {
-      for(let i = 0; i < this.filteredList.length; i++) {
-        if (!this.filteredList[i].selected) {
-          this.filteredList[i].disabled = true;
+      for(let i = 0; i < this.list.length; i++) {
+        if (!this.list[i].selected) {
+          this.list[i].disabled = true;
         }
       }
     } else {
-      for(let i = 0; i < this.filteredList.length; i++) {
-        if (!this.filteredList[i].selected) {
-          this.filteredList[i].disabled = false;
+      for(let i = 0; i < this.list.length; i++) {
+        if (!this.list[i].selected) {
+          this.list[i].disabled = false;
         }
       }
     }
