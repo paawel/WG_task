@@ -21,6 +21,7 @@
             <div class="list__selected-item">
               {{element.name}}
               <button [innerText]="componentData.main.button.remove"
+                      [disabled]="componentData.update.container.show"
                       (click)="removeElementFromSelected(element)">
               </button>
             </div>
@@ -65,8 +66,9 @@
         <li *ngFor="let element of filteredList"
             class="list__update-list-item">
           <input type="checkbox"
+                 class="list__update-list-item-input"
                  id="{{element.id}}"
-                 [disabled]="false"
+                 [disabled]="element.disabled"
                  (input)="selectElement(element)"
                  [checked]="element.selected">
           <label [for]="element.id"

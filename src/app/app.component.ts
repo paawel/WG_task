@@ -88,7 +88,8 @@ export class AppComponent implements OnInit {
       _arr.push({
         name:`Элемент ${i}`,
         id: `el${i}`,
-        selected: false
+        selected: false,
+        disabled: false
       });
     }
 
@@ -121,9 +122,17 @@ export class AppComponent implements OnInit {
     this.tempSelectedList = this.list.filter(el => {
       return el.selected === true;
     });
+
+    if (this.tempSelectedList.length == 3) {
+      this._setDisabledFields(true);
+    } else {
+      this._setDisabledFields(false);
+    }
   }
 
   removeElementFromSelected(el) {
+    el.selected = false;
+
     for(let i = 0; i < this.selectedList.length; i++) {
       if (this.selectedList[i].id === el.id) {
         this.selectedList.splice(i, 1);
@@ -132,9 +141,19 @@ export class AppComponent implements OnInit {
   }
 
   removeElementFromTemporarySelected(el) {
+    el.selected = false;
+
     for(let i = 0; i < this.tempSelectedList.length; i++) {
       if (this.tempSelectedList[i].id === el.id) {
         this.tempSelectedList.splice(i, 1);
+      }
+    }
+  }
+
+  _setDisabledFields(bool) {
+    for(let i = 0; i < this.filteredList.length; i++) {
+      if (!this.filteredList[i].selected) {
+        this.filteredList[i].disabled = bool;
       }
     }
   }
